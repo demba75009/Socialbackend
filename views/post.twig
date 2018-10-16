@@ -1,0 +1,9 @@
+{% for post in posts %}
+<div>
+<h3>{{ post['author']|e}}:{{post.title|e}}</h3>
+
+<p><a href ="/social/web/index.php/blog/{{post.id}}">Voir le post</a> <p>
+<br/>
+</div>
+{%endfor%}
+
