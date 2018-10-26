@@ -9,6 +9,10 @@ $app->register(new Silex\Provider\TwigServiceProvider(), array(
     'twig.path' => __DIR__.'/../views',//on importe twig.path 
 ));
 
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+
+
 //on récupere les données de la base de donnée mysql crée
 $app->register(new Silex\Provider\DoctrineServiceProvider(), array(
     'db.options' => array (
@@ -24,57 +28,44 @@ $app->register(new Silex\Provider\DoctrineServiceProvider(), array(
     
 ));
 
-/*
-$blogPosts = array(
-    1 => array(
-        
-        'date'      => '2011-03-29',
-        'author'    => 'igaaw',
-        'title'     => 'Using Silex',
-        'body'      => '...',
-        'id'      => '100',
-    ),
-      2 => array(
-       'id'      => '12',
-        'date'      => '2011-03-29',
-        'author'    => 'ig',
-        'title'     => 'Using Silex',
-        'body'      => '...',
-    ),
-    
-      3 => array(
-       'id'      => '50',
-        'date'      => '2011-03-29',
-        'author'    => 'igobbbb',
-        'title'     => 'Using Silex',
-        'body'      => '...',
-    ),
-);
 
-//get route : example
 
-$app->get('/blog', function () use ($app,$blogPosts) { //on met en parametre de l'url blog 
-   
-    return $app['twig']->render('blog.twig',array( //ON AFFICHE LE TABLEAU avec les parametre mis dans le fichier blog.twig
-		'posts' =>$blogPosts,
-	
-     ));
-});
 
-$app->get('/blog/{id}', function (Silex\Application $app, $id) use ($blogPosts){
-	foreach($blogPosts as $post){
-		if($post['id'] == $id ){
-			return $app['twig']->render('post.twig',array('posts' =>$blogPosts,
-			));
-	}}
-});
-	*/
-	
+
 	$app->get('/api/blog', function () use ($app) {
 		$posts =$app['db']->fetchAll('SELECT * FROM posts');
 	return json_encode($posts);
 	});
+	
+	$app->get('/api/blog/{id}', function ($id) use ($app) {
+		$sql="SELECT * FROM posts WHERE id = ?";
+		$post =$app['db']->fetchAll($sql, array((int) $id));
+	return json_encode($post);
+	});
+	
+	
+	$app->post('/api/post', function (Request $request) use ($app) {
+      $title = $request->get('title');
+      $body = $request->get('body');
+            $author = $request->get('author');
+      
+	$app['db']->insert('posts', array(
+        'title' => $request ->get('title'),
+         'body' => $body,
+         'author' =>$author,
+    ));
+    
+    $id = $app['db']->lastInsertId();
+    $sql = "SELECT * FROM posts WHERE id = ?";
+    $post = $app['db']->fetchAssoc($sql, array((int) $id));
+    return json_encode($post);
 
+
+      
+      var_dump($title);
+	});
+
+Request::enableHttpMethodParameterOverride();
 
 
 $app->run(); // on compile
