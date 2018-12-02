@@ -31,23 +31,33 @@ $app->register(new Silex\Provider\DoctrineServiceProvider(), array(
 
 
 
-
+//on affiche le contenu de la bdd
 	$app->get('/api/blog', function () use ($app) {
 		$posts =$app['db']->fetchAll('SELECT * FROM posts');
 	return json_encode($posts);
 	});
-	
+	//on affiche le contenu de la table selon son id
+
 	$app->get('/api/blog/{id}', function ($id) use ($app) {
 		$sql="SELECT * FROM posts WHERE id = ?";
 		$post =$app['db']->fetchAll($sql, array((int) $id));
 	return json_encode($post);
 	});
-	
+	$app->POST('/api/blog/{id}', function ($id) use ($app) {
+		$sql="SELECT * FROM posts WHERE id = ?";
+		$post =$app['db']->fetchAll($sql, array((int) $id));
+	return json_encode($post);
+	});
+		$app->OPTIONS('/api/blog/{id}', function ($id) use ($app) {
+		$sql="DELETE  FROM posts WHERE id = ?";
+		$post =$app['db']->fetchAll($sql, array((int) $id));
+	return json_encode($post);
+	});
 	
 	$app->post('/api/post', function (Request $request) use ($app) {
       $title = $request->get('title');
       $body = $request->get('body');
-            $author = $request->get('author');
+      $author = $request->get('author');
       
 	$app['db']->insert('posts', array(
         'title' => $request ->get('title'),
