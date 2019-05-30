@@ -1,5 +1,12 @@
 <?php
 
+
+
+
+  
+  
+
+
 // web/index.php
 require_once __DIR__.'/../vendor/autoload.php'; // on importe le fichier autoload.php
 
@@ -13,7 +20,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 
-//on récupere les données de la base de donnée mysql crée
+//we get the data from the bdd
 $app->register(new Silex\Provider\DoctrineServiceProvider(), array(
     'db.options' => array (
         
@@ -30,29 +37,77 @@ $app->register(new Silex\Provider\DoctrineServiceProvider(), array(
 
 
 
-
-//on affiche le contenu de la bdd
+//fetch the bdd whit get
 	$app->get('/api/blog', function () use ($app) {
 		$posts =$app['db']->fetchAll('SELECT * FROM posts');
 	return json_encode($posts);
 	});
-	//on affiche le contenu de la table selon son id
-
+//fetch a specific post whit id
 	$app->get('/api/blog/{id}', function ($id) use ($app) {
 		$sql="SELECT * FROM posts WHERE id = ?";
 		$post =$app['db']->fetchAll($sql, array((int) $id));
 	return json_encode($post);
+	
 	});
+//Add a post 
 	$app->POST('/api/blog/{id}', function ($id) use ($app) {
 		$sql="SELECT * FROM posts WHERE id = ?";
 		$post =$app['db']->fetchAll($sql, array((int) $id));
 	return json_encode($post);
 	});
+
+//we delete a article whit OPTION
 		$app->OPTIONS('/api/blog/{id}', function ($id) use ($app) {
 		$sql="DELETE  FROM posts WHERE id = ?";
 		$post =$app['db']->fetchAll($sql, array((int) $id));
 	return json_encode($post);
 	});
+
+//we change the article and we save that whit PUT
+	  $app->PUT('/api/put/{id}',function ($id, Request $request) use ($app) {
+	  $title = $request->get('title');
+	  $body = $request->get('body');
+      $author = $request->get('author');
+      
+      	  
+      $sql =" UPDATE posts SET title = '$title', `body` = ' $body', author='$author' WHERE  id = ?";
+	  $post =$app['db']->fetchAll($sql, array((int) $id));
+	return json_encode($post);
+	});
+	
+	
+	//
+	
+	
+// Initialize message variable
+  $msg = "";
+
+  // If upload button is clicked ...
+  if (isset($_POST['upload'])) {
+  	// Get image name
+  	$image = $_FILES['image']['name'];
+  	// Get text
+  	$image_text = mysqli_real_escape_string($db, $_POST['image_text']);
+
+  	// image file directory
+  	$target = "images/".basename($image);
+
+  	$sql = "INSERT INTO image (image, image_text) VALUES ('$image', '$image_text')";
+  	// execute query
+  	mysqli_query($db, $sql);
+
+  	if (move_uploaded_file($_FILES['image']['name'], $target)) {
+  		$msg = "Image uploaded successfully";
+  	}else{
+  		$msg = "Failed to upload image";
+  	}
+
+  $result = mysqli_query($db, "SELECT * FROM image");
+
+
+  }
+	
+	//inserer une image
 	
 	$app->post('/api/post', function (Request $request) use ($app) {
       $title = $request->get('title');
@@ -61,7 +116,7 @@ $app->register(new Silex\Provider\DoctrineServiceProvider(), array(
       
 	$app['db']->insert('posts', array(
         'title' => $request ->get('title'),
-         'body' => $body,
+         'body' => $body ,
          'author' =>$author,
     ));
     
@@ -71,11 +126,24 @@ $app->register(new Silex\Provider\DoctrineServiceProvider(), array(
     return json_encode($post);
 
 
+
       
       var_dump($title);
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
 	});
 
 Request::enableHttpMethodParameterOverride();
 
 
-$app->run(); // on compile
+$app->run(); // we start the application

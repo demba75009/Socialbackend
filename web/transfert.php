@@ -1,39 +1,31 @@
-<?php
-    function transfert(){
-        $ret        = false;
-        $img_blog   = '';
-        $img_taille = 0;
-        $img_type   = '';
-        $img_nom    = '';
-        $taille_max = 250000;
-        $ret        = is_uploaded_file($_FILES['fic']['tmp_name']);
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>Codes d'accès au serveur central de la NASA</title>
+    </head>
+    <body>
+    
+        <?php
+    if (isset($_POST['mdp']) AND $_POST['mdp'] ==  "kangourou") // Si le mot de passe est bon
+    {
+    // On affiche les codes
+    ?>
+        <h1>Voici les codes d'accès :</h1>
+        <p><strong>CRD5-GTFT-CK65-JOPM-V29N-24G1-HH28-LLFV</strong></p>   
         
-        if (!$ret) {
-            echo "Problème de transfert";
-            return false;
-        } else {
-            // Le fichier a bien été reçu
-            $img_taille = $_FILES['fic']['size'];
-            
-            if ($img_taille > $taille_max) {
-                echo "Trop gros !";
-                return false;
-            }
-
-            $img_type = $_FILES['fic']['type'];
-            $img_nom  = $_FILES['fic']['name'];
-        }
-       
-        include ("connexion.php");
-        $img_blob = file_get_contents ($_FILES['fic']['tmp_name']);
-        $req = "INSERT INTO image (" .
-                            "img_nom, img_taille, img_type, img_blog " .
-                            ") VALUES (" .
-                            "'" . $img_nom . "', " .
-                            "'" . $img_taille . "', " .
-                            "'" . $img_type . "', " .
-                            "'" . addslashes ($img_blog) . "') "; // N'oublions pas d'échapper le contenu binaire
-        return true;
- 
+        <p>
+        Cette page est réservée au personnel de la NASA. N'oubliez pas de la visiter régulièrement car les codes d'accès sont changés toutes les semaines.<br />
+        La NASA vous remercie de votre visite.
+        </p>
+        <?php
     }
-?>
+    else // Sinon, on affiche un message d'erreur
+    {
+        echo '<p>Mot de passe incorrect</p>';
+    }
+    ?>
+    
+        
+    </body>
+</html>
