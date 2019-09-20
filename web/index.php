@@ -3,9 +3,7 @@
 
 
 
-  
-  
-
+ 
 
 // web/index.php
 require_once __DIR__.'/../vendor/autoload.php'; // on importe le fichier autoload.php
@@ -50,7 +48,7 @@ $app->register(new Silex\Provider\DoctrineServiceProvider(), array(
 	
 	});
 //Add a post 
-	$app->POST('/api/blog/{id}', function ($id) use ($app) {
+	$app->POST('/api/post/{id}', function ($id) use ($app) {
 		$sql="SELECT * FROM posts WHERE id = ?";
 		$post =$app['db']->fetchAll($sql, array((int) $id));
 	return json_encode($post);
@@ -75,39 +73,8 @@ $app->register(new Silex\Provider\DoctrineServiceProvider(), array(
 	return json_encode($post);
 	});
 	
+
 	
-	//
-	
-	
-// Initialize message variable
-  $msg = "";
-
-  // If upload button is clicked ...
-  if (isset($_POST['upload'])) {
-  	// Get image name
-  	$image = $_FILES['image']['name'];
-  	// Get text
-  	$image_text = mysqli_real_escape_string($db, $_POST['image_text']);
-
-  	// image file directory
-  	$target = "images/".basename($image);
-
-  	$sql = "INSERT INTO image (image, image_text) VALUES ('$image', '$image_text')";
-  	// execute query
-  	mysqli_query($db, $sql);
-
-  	if (move_uploaded_file($_FILES['image']['name'], $target)) {
-  		$msg = "Image uploaded successfully";
-  	}else{
-  		$msg = "Failed to upload image";
-  	}
-
-  $result = mysqli_query($db, "SELECT * FROM image");
-
-
-  }
-	
-	//inserer une image
 	
 	$app->post('/api/post', function (Request $request) use ($app) {
       $title = $request->get('title');

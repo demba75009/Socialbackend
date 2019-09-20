@@ -13,7 +13,7 @@
   	$image_text = mysqli_real_escape_string($db, $_POST['image_text']);
 
   	// image file directory
-  	$target = "Images/".basename($image);
+  	$target = "web/".basename($image);
 
   	$sql = "INSERT INTO image (image, image_text) VALUES ('$image', '$image_text')";
   	// execute query
@@ -26,6 +26,7 @@
   	}
   }
   $result = mysqli_query($db, "SELECT * FROM image");
+  
   
 ?>
 <!DOCTYPE html>
@@ -69,7 +70,7 @@
   <?php
     while ($row = mysqli_fetch_array($result)) {
       echo "<div id='img_div'>";
-      	echo "<img src='image/".$row['image']."' >";
+      	echo "<img src='".$row['image']."' >";
       	echo "<p>".$row['image_text']."</p>";
       echo "</div>";
     }
